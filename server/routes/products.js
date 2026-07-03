@@ -7,9 +7,10 @@ import dbService from '../services/dbService.js';
 import { protect, admin } from '../middleware/auth.js';
 
 const router = express.Router();
+const isVercel = process.env.VERCEL === '1';
 
 // Multer Storage Configuration for Images & CSVs
-const storage = multer.diskStorage({
+const diskStorage = multer.diskStorage({
   destination(req, file, cb) {
     const uploadDir = 'uploads/';
     if (!fs.existsSync(uploadDir)) {
@@ -25,7 +26,9 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({ storage });
+const memoryStorage = multer.memoryStorage();
+
+const upload = multer({ storage: isVercel ? memoryStorage : diskStorage });
 
 // @desc    Upload product image file
 // @route   POST /api/products/upload-image
@@ -35,7 +38,14 @@ router.post('/upload-image', protect, admin, upload.single('image'), (req, res) 
     if (!req.file) {
       return res.status(400).json({ success: false, message: 'Please upload an image file' });
     }
-    const imageUrl = `/uploads/${req.file.filename}`;
+    
+    let imageUrl = '';
+    if (isVercel) {
+      imageUrl = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+    } else {
+      imageUrl = `/uploads/${req.file.filename}`;
+    }
+    
     res.json({ success: true, imageUrl });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -157,11 +167,18 @@ router.post('/bulk-upload', protect, admin, upload.single('file'), async (req, r
     return res.status(400).json({ success: false, message: 'Please upload a CSV file' });
   }
 
-  const filePath = req.file.path;
   const products = [];
   const errors = [];
 
-  fs.createReadStream(filePath)
+  let csvStream;
+  if (isVercel) {
+    const { Readable } = await import('stream');
+    csvStream = Readable.from(req.file.buffer);
+  } else {
+    csvStream = fs.createReadStream(req.file.path);
+  }
+
+  csvStream
     .pipe(csv())
     .on('data', (row) => {
       try {
@@ -185,8 +202,10 @@ router.post('/bulk-upload', protect, admin, upload.single('file'), async (req, r
       }
     })
     .on('end', async () => {
-      // Delete temporary file
-      fs.unlinkSync(filePath);
+      // Delete temporary file if on disk
+      if (!isVercel && fs.existsSync(req.file.path)) {
+        fs.unlinkSync(req.file.path);
+      }
 
       if (errors.length > 0 && products.length === 0) {
         return res.status(400).json({ success: false, message: 'Errors in CSV file', errors });
@@ -204,7 +223,9 @@ router.post('/bulk-upload', protect, admin, upload.single('file'), async (req, r
       }
     })
     .on('error', (error) => {
-      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+      if (!isVercel && fs.existsSync(req.file.path)) {
+        fs.unlinkSync(req.file.path);
+      }
       res.status(500).json({ success: false, message: 'Failed to parse CSV file', error: error.message });
     });
 });
