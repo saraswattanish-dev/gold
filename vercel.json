@@ -28,7 +28,11 @@
       "dest": "/client/images/$1"
     },
     {
-      "src": "/(.*)\\.(js|css|png|jpg|jpeg|gif|svg|ico|json|txt|woff|woff2|ttf)",
+      "src": "/videos/(.*)",
+      "dest": "/client/videos/$1"
+    },
+    {
+      "src": "/(.*)\\.(js|css|png|jpg|jpeg|gif|svg|ico|json|txt|woff|woff2|ttf|mp4|webm|webp)",
       "dest": "/client/$1.$2"
     },
     {
