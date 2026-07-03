@@ -383,16 +383,16 @@ const ProductDetails = () => {
           </div>
 
           {/* Secure Trust Marks */}
-          <div className="pt-6 border-t border-gold-500/10 grid grid-cols-3 gap-3 text-center text-[10px] text-stone-500">
-            <div className="flex flex-col items-center space-y-1">
+          <div className="pt-6 border-t border-gold-500/10 grid grid-cols-1 sm:grid-cols-3 gap-4 text-center text-xs sm:text-[10px] text-stone-500">
+            <div className="flex flex-col sm:flex-col items-center space-y-1">
               <Award className="text-gold-500" size={18} />
               <span>100% BIS Hallmarked</span>
             </div>
-            <div className="flex flex-col items-center space-y-1">
+            <div className="flex flex-col sm:flex-col items-center space-y-1">
               <ShieldCheck className="text-gold-500" size={18} />
               <span>Secured Transit</span>
             </div>
-            <div className="flex flex-col items-center space-y-1">
+            <div className="flex flex-col sm:flex-col items-center space-y-1">
               <Info className="text-gold-500" size={18} />
               <span>Certified Weight</span>
             </div>
