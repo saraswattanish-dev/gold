@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { LayoutDashboard, ShoppingBag, ClipboardList, Upload, Plus, Trash2, Edit, Check, AlertCircle, Loader, DollarSign, Calendar, Package } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, ClipboardList, Upload, Plus, Trash2, Edit, Check, AlertCircle, Loader, DollarSign, Calendar, Package, X } from 'lucide-react';
 
 const AdminDashboard = () => {
   // Navigation State
@@ -20,6 +20,7 @@ const AdminDashboard = () => {
     stock: '10'
   });
   const [editingProductId, setEditingProductId] = useState(null);
+  const [uploadedImages, setUploadedImages] = useState([]);
 
   // Orders State
   const [orders, setOrders] = useState([]);
@@ -75,12 +76,22 @@ const AdminDashboard = () => {
     setErrorMsg(null);
     setSuccessMsg(null);
 
+    const manualImages = productForm.images
+      ? productForm.images.split(',').map((img) => img.trim()).filter(Boolean)
+      : [];
+    const finalImages = [...uploadedImages, ...manualImages];
+
+    if (finalImages.length === 0) {
+      setErrorMsg('At least one product image is required (upload one or enter URL).');
+      return;
+    }
+
     const payload = {
       ...productForm,
       price: Number(productForm.price),
       weight: Number(productForm.weight),
       stock: Number(productForm.stock),
-      images: productForm.images.split(',').map((img) => img.trim())
+      images: finalImages
     };
 
     try {
@@ -111,6 +122,7 @@ const AdminDashboard = () => {
         images: '',
         stock: '10'
       });
+      setUploadedImages([]);
       fetchAdminData();
     } catch (err) {
       setErrorMsg(err.response?.data?.message || 'Action on product catalog failed.');
@@ -127,9 +139,10 @@ const AdminDashboard = () => {
       category: product.category,
       purity: product.purity,
       weight: product.weight.toString(),
-      images: product.images.join(', '),
+      images: '',
       stock: product.stock.toString()
     });
+    setUploadedImages(product.images || []);
   };
 
   const handleDeleteClick = async (productId) => {
@@ -167,16 +180,8 @@ const AdminDashboard = () => {
         }
       });
       if (data.success) {
-        const currentImages = productForm.images.trim();
-        const updatedImages = currentImages 
-          ? `${currentImages}, ${data.imageUrl}`
-          : data.imageUrl;
-        
-        setProductForm(prev => ({
-          ...prev,
-          images: updatedImages
-        }));
-        setSuccessMsg('Image uploaded successfully and appended to URLs.');
+        setUploadedImages(prev => [...prev, data.imageUrl]);
+        setSuccessMsg('Image uploaded successfully.');
       }
     } catch (err) {
       setErrorMsg(err.response?.data?.message || 'Failed to upload image file.');
@@ -509,12 +514,11 @@ const AdminDashboard = () => {
                 <div className="space-y-2 sm:col-span-3">
                   <div className="flex justify-between items-center">
                     <label className="text-[9px] uppercase tracking-wider text-stone-500 font-semibold font-bold">Product Image URLs (Comma Separated)</label>
-                    <span className="text-[9px] text-gold-600 font-semibold">Or upload local image files below</span>
+                    <span className="text-[9px] text-gold-600 font-semibold font-bold">Or upload local image files below</span>
                   </div>
                   <input
                     type="text"
                     name="images"
-                    required
                     placeholder="https://example.com/ring1.jpg, https://example.com/ring2.jpg"
                     value={productForm.images}
                     onChange={handleProductInputChange}
@@ -530,8 +534,25 @@ const AdminDashboard = () => {
                         className="hidden"
                       />
                     </label>
-                    <span className="text-[10px] text-stone-400">Select file to upload and auto-fill URL input above</span>
+                    <span className="text-[10px] text-stone-400">Select file to upload and add it to previews below</span>
                   </div>
+
+                  {uploadedImages.length > 0 && (
+                    <div className="flex flex-wrap gap-2 pt-2">
+                      {uploadedImages.map((img, idx) => (
+                        <div key={idx} className="relative w-14 h-14 border border-gold-500/20 rounded overflow-hidden group">
+                          <img src={img} alt="Preview" className="w-full h-full object-cover" />
+                          <button
+                            type="button"
+                            onClick={() => setUploadedImages(prev => prev.filter((_, i) => i !== idx))}
+                            className="absolute inset-0 bg-black/60 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                          >
+                            <X size={14} className="text-red-500 font-bold" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {/* Description */}
