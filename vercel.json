@@ -20,8 +20,20 @@
       "dest": "/server/server.js"
     },
     {
+      "src": "/assets/(.*)",
+      "dest": "/client/assets/$1"
+    },
+    {
+      "src": "/images/(.*)",
+      "dest": "/client/images/$1"
+    },
+    {
+      "src": "/(.*)\\.(js|css|png|jpg|jpeg|gif|svg|ico|json|txt|woff|woff2|ttf)",
+      "dest": "/client/$1.$2"
+    },
+    {
       "src": "/(.*)",
-      "dest": "/client/$1"
+      "dest": "/client/index.html"
     }
   ]
 }
