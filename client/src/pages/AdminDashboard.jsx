@@ -161,6 +161,60 @@ const AdminDashboard = () => {
     }
   };
 
+  // Client-side Image Compression Helper
+  const compressImage = (file, maxWidth = 1000, maxHeight = 1000, quality = 0.75) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+
+          // Resize aspect ratio constraint
+          if (width > height) {
+            if (width > maxWidth) {
+              height = Math.round((height * maxWidth) / width);
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width = Math.round((width * maxHeight) / height);
+              height = maxHeight;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          canvas.toBlob(
+            (blob) => {
+              if (!blob) {
+                reject(new Error('Canvas to Blob conversion failed'));
+                return;
+              }
+              const compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/, "") + '.jpg', {
+                type: 'image/jpeg',
+                lastModified: Date.now(),
+              });
+              resolve(compressedFile);
+            },
+            'image/jpeg',
+            quality
+          );
+        };
+        img.onerror = (err) => reject(err);
+      };
+      reader.onerror = (err) => reject(err);
+    });
+  };
+
   // Image File Upload Handler
   const handleImageFileUpload = async (e) => {
     const file = e.target.files[0];
@@ -170,10 +224,20 @@ const AdminDashboard = () => {
     setSuccessMsg(null);
     setLoading(true);
 
-    const formData = new FormData();
-    formData.append('image', file);
-
     try {
+      let fileToUpload = file;
+      if (file.type.startsWith('image/')) {
+        setSuccessMsg('Optimizing and compressing image size...');
+        try {
+          fileToUpload = await compressImage(file);
+        } catch (compressionError) {
+          console.warn('Image compression failed, using original:', compressionError.message);
+        }
+      }
+
+      const formData = new FormData();
+      formData.append('image', fileToUpload);
+
       const { data } = await axios.post('/api/products/upload-image', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
@@ -181,7 +245,7 @@ const AdminDashboard = () => {
       });
       if (data.success) {
         setUploadedImages(prev => [...prev, data.imageUrl]);
-        setSuccessMsg('Image uploaded successfully.');
+        setSuccessMsg('Image optimized and uploaded successfully!');
       }
     } catch (err) {
       setErrorMsg(err.response?.data?.message || 'Failed to upload image file.');
@@ -189,6 +253,7 @@ const AdminDashboard = () => {
       setLoading(false);
     }
   };
+
 
   // CSV Bulk Upload Handler
   const handleCsvChange = (e) => {
