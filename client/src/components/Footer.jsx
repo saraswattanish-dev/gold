@@ -6,7 +6,7 @@ const Footer = () => {
   return (
     <footer className="bg-[#f5f2eb] border-t border-gold-500/20 text-stone-600 text-sm">
       {/* Brand Certifications Bar */}
-      <div className="border-b border-gold-500/15 bg-[#FAF9F6] py-6 px-6 md:px-12 grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+      <div className="border-b border-gold-500/15 bg-[#FAF9F6] py-8 md:py-10 px-6 md:px-12 grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
         <div className="flex flex-col items-center justify-center space-y-2">
           <Award className="text-gold-600" size={32} />
           <h4 className="font-serif font-bold text-stone-900 text-sm tracking-widest uppercase">100% BIS Hallmarked</h4>
@@ -25,10 +25,13 @@ const Footer = () => {
       </div>
 
       {/* Main Footer Links */}
-      <div className="py-12 px-6 md:px-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="py-16 px-6 md:px-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {/* Brand Info */}
         <div className="space-y-4">
-          <h3 className="font-serif font-bold text-lg text-stone-900 tracking-widest uppercase gold-gradient-text">ARYANSH GOLD</h3>
+          <div className="flex items-center space-x-3">
+            <img src="/images/logo.jpg" alt="Aryansh Gold Logo" className="w-9 h-9 rounded-full border border-gold-500/20 object-cover" />
+            <h3 className="font-serif font-bold text-lg text-stone-900 tracking-widest uppercase gold-gradient-text">ARYANSH GOLD</h3>
+          </div>
           <p className="text-xs leading-relaxed text-stone-500">
             Crafting premium fine gold jewelry that elevates your elegance. Our catalog combines generational craftsmanship with timeless contemporary designs.
           </p>

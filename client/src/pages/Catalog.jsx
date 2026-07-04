@@ -161,7 +161,7 @@ const Catalog = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-6 md:px-12 py-10 flex flex-col space-y-8">
+    <div className="max-w-7xl mx-auto px-6 md:px-12 py-10 md:py-16 flex flex-col space-y-8 md:space-y-12">
       {/* Page Title */}
       <div className="space-y-1">
         <h1 className="text-3xl font-serif text-stone-900 tracking-widest uppercase">The Gold Collections</h1>
@@ -217,7 +217,7 @@ const Catalog = () => {
       </div>
 
       {/* Main Content Area */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 md:gap-12">
         {/* 1. Sidebar Filters (Desktop) */}
         <div 
           onMouseMove={handleSidebarMouseMove}

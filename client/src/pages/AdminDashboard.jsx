@@ -321,7 +321,7 @@ const AdminDashboard = () => {
   const pendingOrdersCount = orders.filter((o) => o.orderStatus === 'Pending' || o.orderStatus === 'Confirmed').length;
 
   return (
-    <div className="max-w-7xl mx-auto px-6 md:px-12 py-10 flex flex-col md:flex-row gap-8">
+    <div className="max-w-7xl mx-auto px-6 md:px-12 py-10 md:py-16 flex flex-col md:flex-row gap-8 md:gap-12">
       {/* 1. Left Navigation Sidebar */}
       <div className="w-full md:w-64 shrink-0 bg-white border border-gold-500/15 p-4 rounded-lg flex flex-row md:flex-col overflow-x-auto md:overflow-x-visible space-x-2 md:space-x-0 md:space-y-2 h-fit shadow-sm whitespace-nowrap scrollbar-none">
         <h2 className="font-serif font-bold text-stone-850 text-xs tracking-widest uppercase px-3 py-2 border-b border-gold-500/15 mb-2 hidden md:block">Admin Panel</h2>

@@ -34,7 +34,7 @@ const Wishlist = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-6 md:px-12 py-10 flex flex-col space-y-8">
+    <div className="max-w-7xl mx-auto px-6 md:px-12 py-10 md:py-16 flex flex-col space-y-8 md:space-y-12">
       {/* Page Title */}
       <div className="space-y-1">
         <h1 className="text-3xl font-serif text-stone-900 tracking-widest uppercase">My Wishlist</h1>

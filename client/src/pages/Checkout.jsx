@@ -174,7 +174,7 @@ const Checkout = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-6 md:px-12 py-10 flex flex-col space-y-8">
+    <div className="max-w-7xl mx-auto px-6 md:px-12 py-10 md:py-16 flex flex-col space-y-8 md:space-y-12">
       {/* Back Button */}
       <button onClick={() => navigate('/cart')} className="inline-flex items-center space-x-2 text-xs uppercase font-semibold tracking-wider text-gray-400 hover:text-gold-500 transition w-fit">
         <ArrowLeft size={14} />
@@ -193,7 +193,7 @@ const Checkout = () => {
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 md:gap-14">
         {/* Left Side: Delivery Details Form */}
         <div className="lg:col-span-2">
           <form onSubmit={handlePaymentSubmit} className="bg-white border border-gold-500/15 p-6 rounded-lg space-y-6 shadow-sm">

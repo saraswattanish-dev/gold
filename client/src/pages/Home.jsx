@@ -259,18 +259,55 @@ const Home = () => {
 
 
   return (
-    <div className="flex flex-col space-y-16 pb-20">
+    <div className="flex flex-col space-y-16 md:space-y-28 pb-20 md:pb-32">
       {/* 1. Brand Cinematic Banner (3D Animation) */}
-      <div className="relative w-full h-[65vh] md:h-[80vh] overflow-hidden bg-black flex items-center justify-center text-center">
+      <div className="relative w-full h-screen overflow-hidden bg-black flex items-center justify-center text-center">
+        {/* Video Background */}
         <video
           autoPlay
           loop
           muted
           playsInline
-          className="cinematic-banner-video absolute inset-0 w-full h-full object-cover opacity-90"
+          className="cinematic-banner-video absolute inset-0 w-full h-full object-cover opacity-75"
         >
           <source src="/videos/showcase.mp4" type="video/mp4" />
         </video>
+        
+        {/* 35% Dark Overlay for Text Readability */}
+        <div className="absolute inset-0 bg-black/35 z-10" />
+
+        {/* Centered Typography & CTA Content */}
+        <div className="relative z-20 max-w-4xl mx-auto px-6 flex flex-col items-center justify-center h-full text-white space-y-6 md:space-y-8 select-none">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.2, ease: 'easeOut' }}
+            className="space-y-4"
+          >
+            <span className="text-gold-400 uppercase tracking-[0.35em] text-xs font-semibold block">
+              Aryansh Gold Exclusive
+            </span>
+            <h1 className="text-4xl sm:text-6xl md:text-7xl font-serif tracking-widest uppercase text-white drop-shadow-lg leading-tight">
+              Timeless Luxury, <br className="hidden sm:inline" /> Crafted for You
+            </h1>
+            <p className="text-sm sm:text-base md:text-lg max-w-xl mx-auto text-stone-200 font-light tracking-wide leading-relaxed font-sans">
+              Experience the heritage of generational craftsmanship, sculpted in pure 22K & 24K gold masterworks.
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.2, delay: 0.4, ease: 'easeOut' }}
+          >
+            <Link
+              to="/catalog"
+              className="inline-block gold-gradient-bg text-black hover:bg-gold-500 hover:text-white px-8 py-3.5 rounded text-xs font-bold uppercase tracking-widest transition duration-300 shadow-xl shadow-gold-500/10 hover:shadow-gold-500/25 border border-gold-400 animate-pulse"
+            >
+              Explore Collection
+            </Link>
+          </motion.div>
+        </div>
       </div>
 
       {/* 2. Brand Value Indicators */}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import gsap from 'gsap';
@@ -199,6 +199,71 @@ const AdminRoute = ({ children }) => {
   return children;
 };
 
+// AppContent component to utilize react-router hooks inside the Router provider context
+const AppContent = () => {
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
+
+  return (
+    <div className="flex flex-col min-h-screen bg-[#FAF9F6] text-stone-900 relative">
+      {/* Global 3D Gold Dust Background */}
+      <GoldDustBackground />
+      
+      {/* Global Navigation */}
+      <Navbar isHomePage={isHomePage} />
+      
+      {/* Page Content */}
+      <main className={`flex-grow ${isHomePage ? 'pt-0' : 'pt-[70px] md:pt-[76px]'}`}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/catalog" element={<Catalog />} />
+          <Route path="/product/:id" element={<ProductDetails />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/wishlist" element={<Wishlist />} />
+          
+          {/* Guest Auth */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          
+          {/* Protected User Routes */}
+          <Route 
+            path="/checkout" 
+            element={
+              <ProtectedRoute>
+                <Checkout />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/orders" 
+            element={
+              <ProtectedRoute>
+                <Orders />
+              </ProtectedRoute>
+            } 
+          />
+          
+          {/* Protected Admin Routes */}
+          <Route 
+            path="/admin" 
+            element={
+              <AdminRoute>
+                <AdminDashboard />
+              </AdminRoute>
+            } 
+          />
+          
+          {/* Fallback */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </main>
+      
+      {/* Global Footer */}
+      <Footer />
+    </div>
+  );
+};
+
 function App() {
   // Initialize Lenis smooth scroll globally
   useEffect(() => {
@@ -233,62 +298,7 @@ function App() {
     <Router>
       <AuthProvider>
         <CartProvider>
-          <div className="flex flex-col min-h-screen bg-[#FAF9F6] text-stone-900 relative">
-            {/* Global 3D Gold Dust Background */}
-            <GoldDustBackground />
-            
-            {/* Global Navigation */}
-            <Navbar />
-            
-            {/* Page Content */}
-            <main className="flex-grow">
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/catalog" element={<Catalog />} />
-                <Route path="/product/:id" element={<ProductDetails />} />
-                <Route path="/cart" element={<Cart />} />
-                <Route path="/wishlist" element={<Wishlist />} />
-                
-                {/* Guest Auth */}
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                
-                {/* Protected User Routes */}
-                <Route 
-                  path="/checkout" 
-                  element={
-                    <ProtectedRoute>
-                      <Checkout />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/orders" 
-                  element={
-                    <ProtectedRoute>
-                      <Orders />
-                    </ProtectedRoute>
-                  } 
-                />
-                
-                {/* Protected Admin Routes */}
-                <Route 
-                  path="/admin" 
-                  element={
-                    <AdminRoute>
-                      <AdminDashboard />
-                    </AdminRoute>
-                  } 
-                />
-                
-                {/* Fallback */}
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
-            </main>
-            
-            {/* Global Footer */}
-            <Footer />
-          </div>
+          <AppContent />
         </CartProvider>
       </AuthProvider>
     </Router>

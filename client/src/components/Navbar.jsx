@@ -1,17 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { ShoppingBag, Heart, User as UserIcon, Menu, X, Search, LogOut, LayoutDashboard, ClipboardList } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const Navbar = () => {
+const Navbar = ({ isHomePage }) => {
   const { token, user, logout } = useAuth();
   const { cartCount, wishlist } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
+
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const isDarkHeader = isHomePage && !isScrolled;
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -28,46 +44,72 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-50 w-full glass-panel border-b border-gold-500/20 py-4 px-6 md:px-12 flex items-center justify-between">
+    <nav className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 px-6 md:px-12 py-4 md:py-5 flex items-center justify-between ${
+      isScrolled
+        ? 'bg-white/95 border-b border-gold-500/20 shadow-md backdrop-blur-md'
+        : isHomePage
+        ? 'bg-transparent border-b border-white/10'
+        : 'bg-[#FAF9F6] border-b border-gold-500/10'
+    }`}>
       {/* Brand Logo */}
-      <Link to="/" className="flex items-center space-x-2">
+      <Link to="/" className="flex items-center space-x-3">
+        <motion.img 
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+          src="/images/logo.jpg" 
+          alt="Aryansh Gold Logo" 
+          className="w-10 h-10 rounded-full border border-gold-500/30 object-cover shadow-sm"
+        />
         <motion.span 
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-xl md:text-2xl font-bold tracking-widest font-serif gold-gradient-text"
+          className={`text-lg md:text-xl font-bold tracking-widest font-serif transition-colors duration-300 ${
+            isDarkHeader ? 'text-white hover:text-gold-300' : 'gold-gradient-text'
+          }`}
         >
           ARYANSH GOLD
         </motion.span>
       </Link>
 
       {/* Navigation Links - Desktop */}
-      <div className="hidden lg:flex items-center space-x-8 text-sm uppercase tracking-widest font-semibold text-stone-600">
-        <Link to="/" className="hover:text-gold-600 transition duration-300">Home</Link>
-        <Link to="/catalog" className="hover:text-gold-600 transition duration-300">Collections</Link>
-        <Link to="/catalog?category=Rings" className="hover:text-gold-600 transition duration-300">Rings</Link>
-        <Link to="/catalog?category=Necklaces" className="hover:text-gold-600 transition duration-300">Necklaces</Link>
-        <Link to="/catalog?category=Earrings" className="hover:text-gold-600 transition duration-300">Earrings</Link>
+      <div className={`hidden lg:flex items-center space-x-8 lg:space-x-10 text-sm uppercase tracking-widest font-semibold transition-colors duration-300 ${
+        isDarkHeader ? 'text-white/90' : 'text-stone-600'
+      }`}>
+        <Link to="/" className={`transition-colors duration-300 ${isDarkHeader ? 'hover:text-gold-300' : 'hover:text-gold-600'}`}>Home</Link>
+        <Link to="/catalog" className={`transition-colors duration-300 ${isDarkHeader ? 'hover:text-gold-300' : 'hover:text-gold-600'}`}>Collections</Link>
+        <Link to="/catalog?category=Rings" className={`transition-colors duration-300 ${isDarkHeader ? 'hover:text-gold-300' : 'hover:text-gold-600'}`}>Rings</Link>
+        <Link to="/catalog?category=Necklaces" className={`transition-colors duration-300 ${isDarkHeader ? 'hover:text-gold-300' : 'hover:text-gold-600'}`}>Necklaces</Link>
+        <Link to="/catalog?category=Earrings" className={`transition-colors duration-300 ${isDarkHeader ? 'hover:text-gold-300' : 'hover:text-gold-600'}`}>Earrings</Link>
       </div>
 
       {/* Actions (Search, Wishlist, Cart, Profile) - Desktop */}
       <div className="hidden lg:flex items-center space-x-6">
         {/* Search Bar */}
-        <form onSubmit={handleSearchSubmit} className="relative flex items-center border-b border-stone-300 hover:border-gold-500 focus-within:border-gold-500 py-1 transition duration-300">
+        <form onSubmit={handleSearchSubmit} className={`relative flex items-center border-b py-1 transition duration-300 ${
+          isDarkHeader ? 'border-white/30 hover:border-gold-300 focus-within:border-gold-300' : 'border-stone-300 hover:border-gold-500 focus-within:border-gold-500'
+        }`}>
           <input
             type="text"
             placeholder="Search jewelry..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="bg-transparent border-none outline-none text-sm text-stone-800 w-44 focus:w-56 transition-all duration-300 placeholder-stone-400 px-1"
+            className={`bg-transparent border-none outline-none text-sm w-44 focus:w-56 transition-all duration-300 px-1 ${
+              isDarkHeader ? 'text-white placeholder-white/40' : 'text-stone-800 placeholder-stone-400'
+            }`}
           />
-          <button type="submit" className="text-stone-500 hover:text-gold-600 transition">
+          <button type="submit" className={`transition-colors duration-300 ${
+            isDarkHeader ? 'text-white/70 hover:text-gold-300' : 'text-stone-500 hover:text-gold-600'
+          }`}>
             <Search size={16} />
           </button>
         </form>
 
         {/* Wishlist */}
-        <Link to="/wishlist" className="relative text-stone-700 hover:text-gold-600 transition">
+        <Link to="/wishlist" className={`relative transition-colors duration-300 ${
+          isDarkHeader ? 'text-white hover:text-gold-300' : 'text-stone-700 hover:text-gold-600'
+        }`}>
           <Heart size={20} />
           {wishlist.length > 0 && (
             <span className="absolute -top-2 -right-2 bg-gold-500 text-black text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
@@ -77,7 +119,9 @@ const Navbar = () => {
         </Link>
 
         {/* Cart */}
-        <Link to="/cart" className="relative text-stone-700 hover:text-gold-600 transition">
+        <Link to="/cart" className={`relative transition-colors duration-300 ${
+          isDarkHeader ? 'text-white hover:text-gold-300' : 'text-stone-700 hover:text-gold-600'
+        }`}>
           <ShoppingBag size={20} />
           {cartCount > 0 && (
             <span className="absolute -top-2 -right-2 bg-gold-500 text-black text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
@@ -90,10 +134,12 @@ const Navbar = () => {
         <div className="relative">
           <button
             onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-            className="flex items-center space-x-1 text-stone-700 hover:text-gold-600 transition focus:outline-none"
+            className={`flex items-center space-x-1 transition-colors duration-300 focus:outline-none ${
+              isDarkHeader ? 'text-white hover:text-gold-300' : 'text-stone-700 hover:text-gold-600'
+            }`}
           >
             <UserIcon size={20} />
-            {user && <span className="text-xs max-w-[80px] truncate hidden xl:inline font-semibold text-stone-700">{user.name.split(' ')[0]}</span>}
+            {user && <span className={`text-xs max-w-[80px] truncate hidden xl:inline font-semibold transition-colors duration-300 ${isDarkHeader ? 'text-white' : 'text-stone-700'}`}>{user.name.split(' ')[0]}</span>}
           </button>
 
           <AnimatePresence>
@@ -164,7 +210,9 @@ const Navbar = () => {
 
       {/* Mobile Actions & Menu Trigger */}
       <div className="flex lg:hidden items-center space-x-4">
-        <Link to="/wishlist" className="relative text-stone-700 hover:text-gold-600">
+        <Link to="/wishlist" className={`relative transition-colors duration-300 ${
+          isDarkHeader ? 'text-white hover:text-gold-300' : 'text-stone-700 hover:text-gold-600'
+        }`}>
           <Heart size={20} />
           {wishlist.length > 0 && (
             <span className="absolute -top-2 -right-2 bg-gold-500 text-black text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
@@ -173,7 +221,9 @@ const Navbar = () => {
           )}
         </Link>
 
-        <Link to="/cart" className="relative text-stone-700 hover:text-gold-600">
+        <Link to="/cart" className={`relative transition-colors duration-300 ${
+          isDarkHeader ? 'text-white hover:text-gold-300' : 'text-stone-700 hover:text-gold-600'
+        }`}>
           <ShoppingBag size={20} />
           {cartCount > 0 && (
             <span className="absolute -top-2 -right-2 bg-gold-500 text-black text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
@@ -184,7 +234,9 @@ const Navbar = () => {
 
         <button
           onClick={() => setMobileMenuOpen(true)}
-          className="text-stone-700 hover:text-gold-600 focus:outline-none"
+          className={`transition-colors duration-300 focus:outline-none ${
+            isDarkHeader ? 'text-white hover:text-gold-300' : 'text-stone-700 hover:text-gold-600'
+          }`}
         >
           <Menu size={24} />
         </button>
@@ -234,7 +286,7 @@ const Navbar = () => {
               </form>
 
               {/* Navigation Links - Mobile */}
-              <div className="flex flex-col space-y-4 text-base uppercase tracking-widest font-semibold text-stone-600 flex-grow">
+              <div className="flex flex-col space-y-5 text-base uppercase tracking-widest font-semibold text-stone-600 flex-grow">
                 <Link to="/" onClick={() => setMobileMenuOpen(false)} className="hover:text-gold-600 py-2 border-b border-gold-500/5">Home</Link>
                 <Link to="/catalog" onClick={() => setMobileMenuOpen(false)} className="hover:text-gold-600 py-2 border-b border-gold-500/5">All Collections</Link>
                 <Link to="/catalog?category=Rings" onClick={() => setMobileMenuOpen(false)} className="hover:text-gold-600 py-2 border-b border-gold-500/5">Rings</Link>

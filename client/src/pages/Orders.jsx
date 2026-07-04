@@ -79,7 +79,7 @@ const Orders = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-10 flex flex-col space-y-8">
+    <div className="max-w-4xl mx-auto px-6 py-10 md:py-16 flex flex-col space-y-8 md:space-y-12">
       {/* Page Title */}
       <div className="space-y-1">
         <h1 className="text-3xl font-serif text-stone-900 tracking-widest uppercase">Order History</h1>

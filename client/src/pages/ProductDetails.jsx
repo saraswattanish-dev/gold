@@ -233,7 +233,7 @@ const ProductDetails = () => {
   const wishlisted = isInWishlist(product._id);
 
   return (
-    <div className="max-w-7xl mx-auto px-6 md:px-12 py-10 flex flex-col space-y-16">
+    <div className="max-w-7xl mx-auto px-6 md:px-12 py-10 md:py-16 flex flex-col space-y-16 md:space-y-24">
       {/* Back Button */}
       <Link to="/catalog" className="inline-flex items-center space-x-2 text-xs uppercase font-semibold tracking-wider text-gray-400 hover:text-gold-500 transition w-fit">
         <ArrowLeft size={14} />
@@ -241,7 +241,7 @@ const ProductDetails = () => {
       </Link>
 
       {/* Product Details Layout Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-16">
         {/* Left Side: Images Viewer */}
         <div className="space-y-4">
           <div className="relative glass-panel aspect-square rounded-lg overflow-hidden bg-stone-50 border border-gold-500/15 flex items-center justify-center">
